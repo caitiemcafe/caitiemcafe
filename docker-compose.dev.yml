@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cai-tiem-cafe-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: cai_tiem_cafe
+      MYSQL_USER: cafe_app
+      MYSQL_PASSWORD: cafe_local_password
+      MYSQL_ROOT_PASSWORD: cafe_local_root_password
+      TZ: Asia/Bangkok
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - cafe_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pcafe_local_root_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  cafe_mysql_data:

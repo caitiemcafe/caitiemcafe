@@ -1,0 +1,36 @@
+{
+  "name": "cai-tiem-cafe",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "overrides": {
+    "typescript": "~6.0.3",
+    "uuid": "^11.1.1"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "typecheck": "npm run typecheck -w backend && npm run typecheck -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "lint": "eslint scripts eslint.config.js --max-warnings=0 && npm run lint -w backend && npm run lint -w frontend",
+    "test:visual": "node scripts/visual-check.mjs",
+    "generate:qr": "node scripts/generate-vibe-qr.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@eslint/js": "^10.0.1",
+    "@types/qrcode": "^1.5.6",
+    "concurrently": "^10.0.3",
+    "eslint": "^10.7.0",
+    "eslint-plugin-vue": "^10.9.2",
+    "globals": "^17.7.0",
+    "playwright-core": "^1.61.1",
+    "qrcode": "^1.5.4",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.64.0"
+  }
+}

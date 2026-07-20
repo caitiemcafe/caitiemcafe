@@ -1,0 +1,9 @@
+/var/log/pm2/cai-tiem-cafe-*.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

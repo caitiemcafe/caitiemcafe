@@ -1,0 +1,19 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import { env } from './config/env.js';
+import { publicRouter } from './routes/public.js';
+import { adminRouter } from './routes/admin.js';
+import { errorHandler, notFound } from './middleware/errors.js';
+
+export const app = express();
+app.set('trust proxy', 1);
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(cors({ origin: env.FRONTEND_URL.split(',').map((item) => item.trim()), credentials: false }));
+app.use(express.json({ limit: '250kb' }));
+app.use(express.urlencoded({ extended: false, limit: '250kb' }));
+app.get('/api/health', (_req, res) => res.json({ success: true, data: { status: 'ok', timestamp: new Date().toISOString() } }));
+app.use('/api', publicRouter);
+app.use('/api/admin', adminRouter);
+app.use(notFound);
+app.use(errorHandler);
