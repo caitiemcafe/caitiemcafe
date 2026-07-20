@@ -9,7 +9,7 @@ import { ApiError } from '../utils/api-error.js';
 import { signAdminToken } from '../utils/auth.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { categorySchema, generateQuoteSchema, loginSchema, productSchema, quoteSchema, settingsSchema } from '../validation/schemas.js';
-import { generateQuotes } from '../services/gemini.js';
+import { fetchModels, generateQuotes, testAIConnection } from '../services/ai.js';
 import { uploadImage } from '../services/cloudinary.js';
 
 export const adminRouter = Router();
@@ -97,6 +97,26 @@ adminRouter.put('/settings', asyncHandler(async (req, res) => {
   const input = settingsSchema.parse(req.body);
   await Promise.all(Object.entries(input).map(([key, value]) => Setting.upsert({ key, value: String(value) })));
   res.json({ success: true, message: 'Đã lưu cài đặt.' });
+}));
+
+adminRouter.post('/ai/models', asyncHandler(async (req, res) => {
+  const { provider = 'gemini', apiKey = '', proxyUrl = '' } = req.body || {};
+  const models = await fetchModels(String(provider), String(apiKey), String(proxyUrl));
+  res.json({ success: true, data: models });
+}));
+
+adminRouter.post('/ai/test', asyncHandler(async (req, res) => {
+  const { provider = 'gemini', apiKey = '', proxyUrl = '', model = '', prompt = '' } = req.body || {};
+  const result = await testAIConnection(
+    {
+      provider: provider as any,
+      apiKey: String(apiKey),
+      proxyUrl: String(proxyUrl),
+      model: String(model),
+    },
+    String(prompt || '')
+  );
+  res.json({ success: true, data: result, message: 'Kết nối AI thành công!' });
 }));
 
 adminRouter.post('/upload', upload.single('image'), asyncHandler(async (req, res) => {

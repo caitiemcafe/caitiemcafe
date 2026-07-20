@@ -27,8 +27,8 @@ const close = () => { open.value = false }
 <style scoped>
 .site-header { position: absolute; z-index: 20; width: 100%; padding: 18px 0; color: white; }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; }
-.brand { width: 145px; height: 47px; overflow: hidden; border-radius: 9px; background: rgba(255,250,243,.93); padding: 7px 9px; }
-.brand img { width: 100%; height: 100%; object-fit: contain; }
+.brand { display: flex; align-items: center; justify-content: center; height: 72px; overflow: hidden; border-radius: 12px; background: rgba(255,250,243,.96); padding: 4px 8px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.brand img { height: 100%; width: auto; object-fit: contain; }
 .nav-links { display: flex; gap: 34px; align-items: center; font-size: .9rem; font-weight: 600; }
 .nav-links a { opacity: .88; transition: .2s; }
 .nav-links a:hover { opacity: 1; color: #f3c18e; }
@@ -41,6 +41,6 @@ const close = () => { open.value = false }
   .menu-button { display: grid; }
   .nav-links { position: absolute; left: 14px; right: 14px; top: 78px; padding: 24px; display: none; flex-direction: column; gap: 22px; color: var(--coffee); background: rgba(255,250,243,.98); border-radius: 20px; box-shadow: var(--shadow); }
   .nav-links.open { display: flex; }
-  .brand { width: 126px; height: 42px; }
+  .brand { height: 58px; padding: 3px 6px; }
 }
 </style>
