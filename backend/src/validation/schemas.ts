@@ -14,4 +14,4 @@ export const categorySchema = z.object({ name: z.string().trim().min(2).max(120)
 export const productSchema = z.object({ categoryId: z.number().int().positive(), name: z.string().trim().min(2).max(160), slug: z.string().trim().regex(/^[a-z0-9-]+$/).max(180), description: optionalText(2000), price: z.number().min(0).max(100_000_000), imageUrl: z.string().url().or(z.string().startsWith('/')).or(z.literal('')).optional().nullable(), isOutOfStock: z.boolean().default(false), isActive: z.boolean().default(true) });
 export const quoteSchema = z.object({ content: z.string().trim().min(10).max(500), topic: optionalText(100), isActive: z.boolean().default(true) });
 export const generateQuoteSchema = z.object({ count: z.number().int().min(1).max(20).default(10), topic: z.string().trim().min(2).max(100).default('Cà phê và năng lượng tích cực') });
-export const settingsSchema = z.record(z.enum(['shipping_fee', 'shop_name', 'shop_phone', 'shop_address', 'shop_email', 'is_accepting_orders']), z.union([z.string().max(1000), z.number(), z.boolean()]));
+export const settingsSchema = z.record(z.string().max(100), z.union([z.string().max(4000), z.number(), z.boolean()]));
