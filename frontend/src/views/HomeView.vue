@@ -4,6 +4,7 @@ import { ArrowDown, ArrowRight, Clock3, Coffee, Heart, MapPin, Phone, ShoppingBa
 import SiteHeader from '../components/SiteHeader.vue'
 import ProductModal from '../components/ProductModal.vue'
 import CartDrawer from '../components/CartDrawer.vue'
+import PwaInstallBanner from '../components/PwaInstallBanner.vue'
 import { api } from '../services/api'
 import type { ApiResponse, Category, Product, Settings } from '../types'
 
@@ -52,7 +53,7 @@ onMounted(load)
 
     <footer id="contact"><div class="container footer-grid"><div class="footer-brand"><img src="/images/brand/cafe-name.png" alt="Cái Tiệm" /><p>Một chút cà phê. Một ngày thật chill.</p></div><div><b>Liên hệ</b><a v-if="settings.shop_phone" :href="`tel:${settings.shop_phone}`"><Phone :size="17" />{{ settings.shop_phone }}</a><span v-if="settings.shop_address"><MapPin :size="17" />{{ settings.shop_address }}</span><span v-else><MapPin :size="17" />Địa chỉ sẽ được cập nhật</span></div><div><b>Khám phá</b><a href="#menu">Menu</a><RouterLink to="/vibe">Vibe QR</RouterLink><RouterLink to="/admin/login">Quản trị</RouterLink></div></div><div class="container footer-bottom"><span>© {{ new Date().getFullYear() }} Cái Tiệm KÀFE</span><span>Làm bằng một chút cà phê và rất nhiều chân thành.</span></div></footer>
 
-    <ProductModal :product="selected" @close="selected = null" /><CartDrawer :settings="settings" />
+    <ProductModal :product="selected" @close="selected = null" /><CartDrawer :settings="settings" /><PwaInstallBanner />
   </main>
 </template>
 

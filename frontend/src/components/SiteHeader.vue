@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Menu, ShoppingBag, Sparkles, X } from '@lucide/vue'
+import { Download, Menu, ShoppingBag, Sparkles, X } from '@lucide/vue'
 import { useCartStore } from '../stores/cart'
+import { usePWA } from '../composables/usePWA'
 
 const open = ref(false)
 const cart = useCartStore()
 const close = () => { open.value = false }
+
+const { isInstallable, install } = usePWA()
+const handleHeaderInstall = async () => {
+  await install()
+  close()
+}
 </script>
 
 <template>
@@ -15,6 +22,7 @@ const close = () => { open.value = false }
       <nav :class="['nav-links', { open }]" aria-label="Điều hướng chính">
         <a href="#menu" @click="close">Menu</a><a href="#story" @click="close">Về quán</a><a href="#contact" @click="close">Liên hệ</a>
         <RouterLink to="/vibe" class="vibe-link" @click="close"><Sparkles :size="16" /> Vibe</RouterLink>
+        <button v-if="isInstallable" class="pwa-header-btn" @click="handleHeaderInstall"><Download :size="16" /> Tải App</button>
       </nav>
       <div class="nav-actions">
         <button class="cart-button" aria-label="Mở giỏ hàng" @click="cart.isOpen = true"><ShoppingBag :size="20" /><span v-if="cart.count">{{ cart.count }}</span></button>
@@ -42,5 +50,10 @@ const close = () => { open.value = false }
   .nav-links { position: absolute; left: 14px; right: 14px; top: 78px; padding: 24px; display: none; flex-direction: column; gap: 22px; color: var(--coffee); background: rgba(255,250,243,.98); border-radius: 20px; box-shadow: var(--shadow); }
   .nav-links.open { display: flex; }
   .brand { height: 58px; padding: 3px 6px; }
+}
+.pwa-header-btn { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 0; color: inherit; opacity: .88; transition: .2s; font-size: inherit; font-weight: inherit; padding: 0; }
+.pwa-header-btn:hover { opacity: 1; color: #f3c18e; }
+@media (max-width: 740px) {
+  .pwa-header-btn { width: 100%; justify-content: center; padding: 10px 0; border: 1px dashed rgba(59, 36, 23, 0.15); border-radius: 12px; background: rgba(59, 36, 23, 0.03); }
 }
 </style>
