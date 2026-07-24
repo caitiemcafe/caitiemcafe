@@ -12,8 +12,9 @@ definePageMeta({
 const form = reactive({
   shop_name: 'Cái Tiệm',
   shop_phone: '0914.780.342',
-  shop_address: '',
-  shop_email: '',
+  shop_address: '391 Giải Phóng, Xã Krông Pắc, Đắk Lắk',
+  shop_email: 'hoangvan050602@gmail.com',
+  shop_opening_hours: '06:00 - 16:00 (6h sáng - 4h chiều)',
   shipping_fee: 0,
   is_accepting_orders: true,
   ai_provider: 'gemini',
@@ -49,6 +50,7 @@ onMounted(async () => {
     const { data } = await api.get<ApiResponse<Settings>>('/admin/settings')
     Object.assign(form, {
       ...data.data,
+      shop_opening_hours: data.data.shop_opening_hours || '06:00 - 16:00 (6h sáng - 4h chiều)',
       shipping_fee: Number(data.data.shipping_fee || 0),
       is_accepting_orders: data.data.is_accepting_orders !== 'false',
       ai_provider: data.data.ai_provider || 'gemini',
@@ -143,6 +145,7 @@ async function runAiTest() {
           <label class="field-label">Số điện thoại<input v-model="form.shop_phone" class="field" maxlength="30" /></label>
           <label class="field-label">Địa chỉ<textarea v-model="form.shop_address" class="field" rows="3" maxlength="500"></textarea></label>
           <label class="field-label">Email hiển thị<input v-model="form.shop_email" class="field" type="email" maxlength="254" /></label>
+          <label class="field-label">Giờ nhận đơn / Mở cửa<input v-model="form.shop_opening_hours" class="field" maxlength="120" placeholder="VD: 06:00 - 16:00 (6h sáng - 4h chiều)" /></label>
         </section>
 
         <section class="admin-card panel">
