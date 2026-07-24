@@ -1,0 +1,231 @@
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { ImageUp, Pencil, Plus, Power, Tags, X } from '@lucide/vue'
+import { api } from '~/src/services/api'
+import type { ApiResponse, Category, Product } from '~/src/types'
+
+definePageMeta({
+  layout: 'admin',
+  middleware: 'auth'
+})
+
+const categories = ref<Category[]>([])
+const products = ref<Product[]>([])
+const loading = ref(true)
+const error = ref('')
+const success = ref('')
+const showProduct = ref(false)
+const uploading = ref(false)
+
+const emptyProduct = () => ({ id: 0, categoryId: 1, name: '', slug: '', description: '', price: 0, imageUrl: '', isOutOfStock: false, isActive: true })
+const form = reactive(emptyProduct())
+const categoryForm = reactive({ id: 0, name: '', slug: '', sortOrder: 0, imageUrl: '', isActive: true })
+
+const slugify = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+async function load() {
+  loading.value = true
+  try {
+    const [c, p] = await Promise.all([
+      api.get<ApiResponse<Category[]>>('/admin/categories'),
+      api.get<ApiResponse<Product[]>>('/admin/products')
+    ])
+    categories.value = c.data.data
+    products.value = p.data.data
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không tải được menu.'
+  } finally {
+    loading.value = false
+  }
+}
+
+function openProduct(product?: Product) {
+  Object.assign(form, product ? { ...product, price: Number(product.price), description: product.description || '', imageUrl: product.imageUrl || '' } : emptyProduct())
+  showProduct.value = true
+}
+
+async function saveProduct() {
+  error.value = ''
+  try {
+    const payload = { ...form, slug: form.slug || slugify(form.name) }
+    if (form.id) await api.put(`/admin/products/${form.id}`, payload)
+    else await api.post('/admin/products', payload)
+    showProduct.value = false
+    success.value = 'Đã lưu món.'
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không lưu được món.'
+  }
+}
+
+async function toggle(product: Product) {
+  try {
+    await api.patch(`/admin/products/${product.id}/toggle-stock`)
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không cập nhật được.'
+  }
+}
+
+async function hide(product: Product) {
+  try {
+    await api.delete(`/admin/products/${product.id}`)
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không ẩn được món.'
+  }
+}
+
+async function uploadFile(event: Event) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  uploading.value = true
+  try {
+    const fd = new FormData()
+    fd.append('image', file)
+    const { data } = await api.post<ApiResponse<{ url: string }>>('/admin/upload', fd)
+    form.imageUrl = data.data.url
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Upload lỗi.'
+  } finally {
+    uploading.value = false
+  }
+}
+
+function editCategory(category?: Category) {
+  Object.assign(categoryForm, category ? { ...category, imageUrl: category.imageUrl || '' } : { id: 0, name: '', slug: '', sortOrder: categories.value.length + 1, imageUrl: '', isActive: true })
+}
+
+async function saveCategory() {
+  try {
+    const payload = { ...categoryForm, slug: categoryForm.slug || slugify(categoryForm.name) }
+    if (categoryForm.id) await api.put(`/admin/categories/${categoryForm.id}`, payload)
+    else await api.post('/admin/categories', payload)
+    editCategory()
+    success.value = 'Đã lưu danh mục.'
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không lưu được danh mục.'
+  }
+}
+
+async function hideCategory(category: Category) {
+  try {
+    await api.delete(`/admin/categories/${category.id}`)
+    await load()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Không ẩn được danh mục.'
+  }
+}
+
+onMounted(() => {
+  editCategory()
+  load()
+})
+
+const money = (v: string | number) => new Intl.NumberFormat('vi-VN').format(Number(v)) + 'đ'
+</script>
+
+<template>
+  <section>
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">Menu</span>
+        <h1>Danh sách món</h1>
+        <p>Thêm món, sửa giá và bật tắt hết hàng nhanh.</p>
+      </div>
+      <button class="btn btn-primary" @click="openProduct()"><Plus :size="18" />Thêm món</button>
+    </div>
+    <p v-if="error" class="admin-error">{{ error }}</p>
+    <p v-if="success" class="admin-success">{{ success }}</p>
+
+    <div class="admin-card admin-table-wrap">
+      <div v-if="loading" class="admin-empty">Đang tải menu...</div>
+      <table v-else class="admin-table">
+        <thead>
+          <tr>
+            <th>Món</th>
+            <th>Danh mục</th>
+            <th>Giá</th>
+            <th>Tình trạng</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="product in products" :key="product.id">
+            <td>
+              <div class="product-cell">
+                <img :src="product.imageUrl || '/images/menu/coffee.webp'" :alt="product.name" />
+                <div><b>{{ product.name }}</b><small>{{ product.slug }}</small></div>
+              </div>
+            </td>
+            <td>{{ product.category?.name }}</td>
+            <td><b>{{ money(product.price) }}</b></td>
+            <td><span :class="['pill', product.isOutOfStock ? 'red' : 'green']">{{ product.isOutOfStock ? 'Hết hàng' : 'Còn hàng' }}</span></td>
+            <td>
+              <div class="row-actions">
+                <button @click="openProduct(product)"><Pencil :size="16" />Sửa</button>
+                <button @click="toggle(product)"><Power :size="16" />{{ product.isOutOfStock ? 'Mở bán' : 'Hết hàng' }}</button>
+                <button @click="hide(product)">Ẩn</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section class="category-box admin-card">
+      <div>
+        <Tags />
+        <div>
+          <h2 class="serif">Danh mục</h2>
+          <p>Bốn nhóm chính hiển thị trên menu khách.</p>
+        </div>
+      </div>
+      <div class="category-list">
+        <button v-for="category in categories" :key="category.id" @click="editCategory(category)">
+          {{ category.name }} <small>#{{ category.sortOrder }}</small>
+        </button>
+      </div>
+      <form class="category-form" @submit.prevent="saveCategory">
+        <input v-model="categoryForm.name" class="field" required placeholder="Tên danh mục" @blur="categoryForm.slug ||= slugify(categoryForm.name)" />
+        <input v-model="categoryForm.slug" class="field" required placeholder="slug" />
+        <input v-model.number="categoryForm.sortOrder" class="field" type="number" min="0" />
+        <button class="btn btn-primary">{{ categoryForm.id ? 'Lưu' : 'Thêm' }}</button>
+        <button v-if="categoryForm.id" type="button" class="btn btn-outline" @click="hideCategory(categoryForm)">Ẩn</button>
+      </form>
+    </section>
+
+    <div v-if="showProduct" class="admin-modal" @click.self="showProduct = false">
+      <form class="admin-modal-box" @submit.prevent="saveProduct">
+        <button type="button" class="admin-modal-close" @click="showProduct = false"><X /></button>
+        <h2>{{ form.id ? 'Sửa món' : 'Thêm món mới' }}</h2>
+        <div class="form-grid">
+          <label class="field-label">Tên món<input v-model="form.name" class="field" required @blur="form.slug ||= slugify(form.name)" /></label>
+          <label class="field-label">Danh mục
+            <select v-model.number="form.categoryId" class="field">
+              <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+            </select>
+          </label>
+          <label class="field-label">Slug<input v-model="form.slug" class="field" required /></label>
+          <label class="field-label">Giá (đ)<input v-model.number="form.price" class="field" type="number" min="0" required /></label>
+        </div>
+        <label class="field-label">Mô tả<textarea v-model="form.description" class="field" rows="3"></textarea></label>
+        <label class="field-label">URL ảnh<input v-model="form.imageUrl" class="field" placeholder="/images/menu/coffee.webp" /></label>
+        <label class="upload">
+          <ImageUp :size="18" />{{ uploading ? 'Đang tải...' : 'Tải ảnh lên Cloudinary' }}
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" :disabled="uploading" @change="uploadFile" />
+        </label>
+        <div class="checks">
+          <label><input v-model="form.isOutOfStock" type="checkbox" /> Hết hàng</label>
+          <label><input v-model="form.isActive" type="checkbox" /> Đang hiển thị</label>
+        </div>
+        <button class="btn btn-primary save">Lưu món</button>
+      </form>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.product-cell{display:flex;align-items:center;gap:11px}.product-cell img{width:52px;height:52px;object-fit:cover;border-radius:10px}.product-cell small,.product-cell b{display:block}.product-cell small{margin-top:3px;color:#9b8c82}.row-actions{display:flex;gap:12px}.row-actions button{display:flex;align-items:center;gap:4px;cursor:pointer}.category-box{margin-top:24px;padding:24px}.category-box>div:first-child{display:flex;gap:13px;align-items:center}.category-box h2{margin:0;color:var(--coffee);font-size:1.7rem}.category-box p{margin:2px 0;color:#887970}.category-list{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.category-list button{padding:8px 12px;border:1px solid #d9c8b8;border-radius:99px;background:#fff;color:var(--coffee);cursor:pointer}.category-list small{color:#a78772}.category-form{display:grid;grid-template-columns:1fr 1fr 90px auto auto;gap:8px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.admin-modal-box>.field-label{margin-top:15px}.upload{margin:15px 0;display:flex;gap:8px;align-items:center;color:#965a37;font-weight:700;cursor:pointer}.upload input{display:none}.checks{display:flex;gap:22px;margin:18px 0}.save{width:100%}@media(max-width:700px){.admin-page-head{align-items:flex-start;flex-direction:column}.category-form,.form-grid{grid-template-columns:1fr}.row-actions{flex-direction:column;align-items:flex-start}}
+</style>
