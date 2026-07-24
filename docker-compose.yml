@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: caitiem-backend
+    restart: always
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=3003
+      - NODE_ENV=production
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: caitiem-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - NUXT_API_TARGET=http://backend:3003
+      - NUXT_PUBLIC_API_BASE=/api
+    depends_on:
+      - backend
