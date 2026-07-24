@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { env } from '../config/env.js';
-import type { Order, OrderItem } from '../models/index.js';
+import { Setting, type Order, type OrderItem } from '../models/index.js';
 
 type OrderWithItems = Order & { items?: OrderItem[] };
 const money = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
@@ -29,8 +29,12 @@ export async function sendOrderEmails(order: OrderWithItems) {
   let shop = false;
   let customer = false;
   const jobs: Promise<void>[] = [];
-  if (env.SHOP_ORDER_EMAIL) {
-    jobs.push(mailer.sendMail({ from, to: env.SHOP_ORDER_EMAIL, subject: `Đơn hàng mới ${order.orderCode}`, html: orderHtml(order, 'Có đơn hàng mới') }).then(() => { shop = true }));
+
+  const shopEmailSetting = await Setting.findByPk('shop_email');
+  const recipientShopEmail = shopEmailSetting?.value?.trim() || env.SHOP_ORDER_EMAIL;
+
+  if (recipientShopEmail) {
+    jobs.push(mailer.sendMail({ from, to: recipientShopEmail, subject: `Đơn hàng mới ${order.orderCode}`, html: orderHtml(order, 'Có đơn hàng mới') }).then(() => { shop = true }));
   }
   if (order.customerEmail) {
     jobs.push(mailer.sendMail({ from, to: order.customerEmail, subject: `Cái Tiệm đã nhận đơn ${order.orderCode}`, html: orderHtml(order, 'Đặt hàng thành công!') }).then(() => { customer = true }));

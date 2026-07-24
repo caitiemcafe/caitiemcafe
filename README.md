@@ -131,12 +131,12 @@ sudo nginx -t
 
 Nếu build hoặc migration lỗi, không restart process đang chạy. Luôn backup database trước migration production. Frontend cũ có thể rollback bằng cách giữ lại bản `dist` trước đó; backend rollback về commit trước và chỉ undo migration sau khi đã kiểm tra ảnh hưởng dữ liệu.
 
-## Dữ liệu còn chờ chủ quán xác nhận
+## Dữ liệu thông tin quán (Đã xác nhận & Cấu hình Admin Settings)
 
-* Địa chỉ quán.
-* Email nhận đơn hàng.
-* Giờ nhận đơn.
-* Giá của “Nước ngọt các loại” trong menu ảnh.
-* Domain production và cổng backend thực tế còn trống trên VPS.
+* **Địa chỉ quán**: 391 Giải Phóng, Xã Krông Pắc, Đắk Lắk
+* **SĐT**: 0914780342 (0914.780.342)
+* **Email nhận đơn hàng**: hoangvan050602@gmail.com
+* **Giờ nhận đơn**: 06:00 - 16:00 (6h sáng đến 4h chiều)
+* **Giá sản phẩm trong DB**: Đã đồng bộ đầy đủ các món menu.
+* **Cần xác nhận còn lại**: Domain production và cổng backend thực tế còn trống trên VPS.
 
-Không có giá nào được tự đoán: “Nước ngọt các loại” chưa được đưa vào seed cho tới khi có giá chính thức.

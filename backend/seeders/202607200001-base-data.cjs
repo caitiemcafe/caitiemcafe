@@ -17,8 +17,12 @@ module.exports = { async up(q) {
     p(12,4,'Trà tắc','tra-tac',15000,'/images/menu/citrus.webp'), p(13,4,'Trà chanh','tra-chanh',15000,'/images/menu/citrus.webp'), p(14,4,'Nước cam','nuoc-cam',20000,'/images/menu/citrus.webp'),
   ]);
   await q.bulkInsert('settings', [
-    { key: 'shipping_fee', value: '0', created_at: now, updated_at: now }, { key: 'shop_name', value: 'Cái Tiệm', created_at: now, updated_at: now },
-    { key: 'shop_phone', value: '0914.780.342', created_at: now, updated_at: now }, { key: 'shop_address', value: '', created_at: now, updated_at: now },
-    { key: 'shop_email', value: '', created_at: now, updated_at: now }, { key: 'is_accepting_orders', value: 'true', created_at: now, updated_at: now },
+    { key: 'shipping_fee', value: '0', created_at: now, updated_at: now },
+    { key: 'shop_name', value: 'Cái Tiệm', created_at: now, updated_at: now },
+    { key: 'shop_phone', value: '0914.780.342', created_at: now, updated_at: now },
+    { key: 'shop_address', value: '391 Giải Phóng, Xã Krông Pắc, Đắk Lắk', created_at: now, updated_at: now },
+    { key: 'shop_email', value: 'hoangvan050602@gmail.com', created_at: now, updated_at: now },
+    { key: 'shop_opening_hours', value: '06:00 - 16:00 (6h sáng - 4h chiều)', created_at: now, updated_at: now },
+    { key: 'is_accepting_orders', value: 'true', created_at: now, updated_at: now },
   ]);
 }, async down(q) { await q.bulkDelete('products', null, {}); await q.bulkDelete('categories', null, {}); await q.bulkDelete('settings', null, {}); } };

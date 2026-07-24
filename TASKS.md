@@ -7,16 +7,16 @@
 ## Phase 0 — Xác minh dữ liệu
 
 - [x] Xác nhận cách hiển thị tên/logo từ `cafe_name.png`
-- [ ] Xác nhận số điện thoại quán
-- [ ] Xác nhận địa chỉ quán
-- [ ] Xác nhận email nhận thông báo đơn hàng
-- [ ] Xác nhận phí giao hàng mặc định
-- [ ] Xác nhận giờ/khoảng thời gian nhận đơn
+- [x] Xác nhận số điện thoại quán (0914780342)
+- [x] Xác nhận địa chỉ quán (391 Giải Phóng, Xã Krông Pắc, Đắk Lắk)
+- [x] Xác nhận email nhận thông báo đơn hàng (hoangvan050602@gmail.com)
+- [x] Xác nhận phí giao hàng mặc định (0đ)
+- [x] Xác nhận giờ/khoảng thời gian nhận đơn (06:00 - 16:00)
 - [x] Lập danh sách món nhóm Cà phê
 - [x] Lập danh sách món nhóm Ca cao
 - [x] Lập danh sách món nhóm Sữa chua
 - [x] Lập danh sách món nhóm Nước giải khát
-- [ ] Kiểm tra thủ công tên và giá từng món từ `MENU_CHUAN.png`
+- [x] Kiểm tra thủ công tên và giá từng món từ menu chuẩn
 - [x] Xác nhận ảnh được phép sử dụng chính thức
 
 ## Phase 1 — Khởi tạo monorepo

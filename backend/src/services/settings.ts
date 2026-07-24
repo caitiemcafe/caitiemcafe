@@ -1,6 +1,6 @@
 import { Setting } from '../models/index.js';
 
-export const publicKeys = ['shipping_fee', 'shop_name', 'shop_phone', 'shop_address', 'shop_email', 'is_accepting_orders'] as const;
+export const publicKeys = ['shipping_fee', 'shop_name', 'shop_phone', 'shop_address', 'shop_email', 'shop_opening_hours', 'is_accepting_orders'] as const;
 
 export async function getSettings() {
   const rows = await Setting.findAll({ where: { key: publicKeys } });

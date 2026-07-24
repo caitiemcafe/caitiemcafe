@@ -17,7 +17,7 @@ const selected = ref<Product | null>(null)
 // Nuxt SSR Data Fetching
 const { data: categoryData, error: categoryErr } = await useFetch<ApiResponse<Category[]>>('/api/categories')
 const { data: productData, error: productErr } = await useFetch<ApiResponse<Product[]>>('/api/products')
-const { data: settingData, error: settingErr } = await useFetch<ApiResponse<Settings>>('/api/settings/public')
+const { data: settingData, error: settingErr } = await useFetch<ApiResponse<Settings>>('/api/settings/public', { key: 'public-settings' })
 
 const categories = computed(() => categoryData.value?.data || [])
 const products = computed(() => productData.value?.data || [])
@@ -160,10 +160,11 @@ const money = (value: string | number) => new Intl.NumberFormat('vi-VN').format(
       <div class="container footer-grid">
         <div class="footer-brand"><img src="/images/brand/cafe-name.png" alt="Cái Tiệm" /><p>Một chút cà phê. Một ngày thật chill.</p></div>
         <div>
-          <b>Liên hệ</b>
+          <b>Liên hệ & Giờ nhận đơn</b>
           <a v-if="settings.shop_phone" :href="`tel:${settings.shop_phone}`"><Phone :size="17" />{{ settings.shop_phone }}</a>
           <span v-if="settings.shop_address"><MapPin :size="17" />{{ settings.shop_address }}</span>
           <span v-else><MapPin :size="17" />Địa chỉ sẽ được cập nhật</span>
+          <span v-if="settings.shop_opening_hours"><Clock3 :size="17" />Giờ nhận đơn: {{ settings.shop_opening_hours }}</span>
         </div>
         <div>
           <b>Khám phá</b>
