@@ -1,0 +1,69 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { Banknote, Coffee, FileText, QrCode } from '@lucide/vue'
+import { api } from '~/src/services/api'
+import type { ApiResponse } from '~/src/types'
+
+definePageMeta({
+  layout: 'admin',
+  middleware: 'auth'
+})
+
+interface Stats { orderCount: number; orderValue: number; quoteScans: number; productCount: number }
+
+const stats = ref<Stats>({ orderCount: 0, orderValue: 0, quoteScans: 0, productCount: 0 })
+const loading = ref(true)
+const error = ref('')
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get<ApiResponse<Stats>>('/admin/dashboard')
+    stats.value = data.data
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Không tải được dữ liệu.'
+  } finally {
+    loading.value = false
+  }
+})
+
+const money = (value: number) => new Intl.NumberFormat('vi-VN').format(value) + 'đ'
+</script>
+
+<template>
+  <section>
+    <div class="page-head">
+      <div>
+        <span class="eyebrow">Hôm nay</span>
+        <h1 class="serif">Tổng quan quán</h1>
+        <p>Nắm nhanh những gì vừa diễn ra tại Cái Tiệm.</p>
+      </div>
+    </div>
+    <p v-if="error" class="notice">{{ error }}</p>
+
+    <div class="stats">
+      <article><span><FileText /></span><small>Đơn đã đặt hôm nay</small><b>{{ loading ? '—' : stats.orderCount }}</b></article>
+      <article><span><Banknote /></span><small>Tổng giá trị đơn</small><b>{{ loading ? '—' : money(stats.orderValue) }}</b></article>
+      <article><span><QrCode /></span><small>Lượt lấy thông điệp</small><b>{{ loading ? '—' : stats.quoteScans }}</b></article>
+      <article><span><Coffee /></span><small>Món đang hiển thị</small><b>{{ loading ? '—' : stats.productCount }}</b></article>
+    </div>
+
+    <div class="welcome card">
+      <div>
+        <span class="eyebrow">Gọn nhẹ để dễ dùng</span>
+        <h2 class="serif">Mọi thứ quan trọng<br />đều ở ngay đây.</h2>
+        <p>Xem đơn khách vừa đặt, cập nhật món hết hàng hoặc chuẩn bị thêm vài thông điệp tích cực cho chiếc QR của quán.</p>
+      </div>
+      <div class="quick">
+        <NuxtLink to="/admin/orders">Xem đơn mới</NuxtLink>
+        <NuxtLink to="/admin/products">Cập nhật menu</NuxtLink>
+        <NuxtLink to="/admin/quotes">Quản lý Vibe</NuxtLink>
+      </div>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.page-head h1 { margin: 8px 0; font-size: 2.7rem; color: var(--coffee); }.page-head p { color: #86776d; }.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 28px 0; }.stats article { position: relative; padding: 22px; overflow: hidden; border: 1px solid rgba(59,36,23,.08); border-radius: 19px; background: #fffaf3; }.stats article > span { position: absolute; right: 18px; top: 18px; color: #bd8b69; }.stats small,.stats b { display: block; }.stats small { color: #887a70; }.stats b { margin-top: 19px; color: var(--coffee); font-size: 1.7rem; }.welcome { min-height: 330px; padding: 45px; display: flex; gap: 50px; align-items: center; justify-content: space-between; background: linear-gradient(100deg,rgba(255,250,243,.94),rgba(255,250,243,.84)),url('/images/brand/hero-cafe.png') center/cover; }.welcome h2 { margin: 12px 0; font-size: 2.7rem; color: var(--coffee); }.welcome p { max-width: 560px; color: #75675e; line-height: 1.7; }.quick { min-width: 180px; display: grid; gap: 9px; }.quick a { padding: 12px 16px; border-radius: 12px; color: var(--coffee); background: #edddca; font-weight: 700; }.notice { padding: 12px; color: #972d26; background: #fce8e5; border-radius: 12px; }
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.stats{grid-template-columns:1fr}.welcome{padding:28px;align-items:flex-start;flex-direction:column}.welcome h2{font-size:2.2rem}.quick{width:100%}}
+.page-head .eyebrow { color: #8f522f; }.page-head p,.stats small { color: #6d5f56; }.stats article > span { color: #9b5b35; }.welcome p { color: #675950; }
+</style>
