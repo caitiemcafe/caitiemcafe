@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { Minus, Plus, ShoppingBag, X } from '@lucide/vue'
-import type { Product } from '~/src/types'
+import { Clock3, Minus, Plus, ShoppingBag, X } from '@lucide/vue'
+import type { Product, Settings } from '~/src/types'
 import { useCartStore } from '~/src/stores/cart'
 
-const props = defineProps<{ product: Product | null }>()
+const props = defineProps<{ product: Product | null; settings?: Settings }>()
 const emit = defineEmits<{ close: [] }>()
 const cart = useCartStore()
 const quantity = ref(1)
@@ -30,6 +30,11 @@ function add() {
         <h2 id="product-title" class="serif">{{ product.name }}</h2>
         <p v-if="product.description" class="description">{{ product.description }}</p>
         <strong class="price">{{ money(product.price) }}</strong>
+        <div v-if="settings?.shop_opening_hours" class="hours-note">
+          <Clock3 :size="15" />
+          <span>Giờ nhận đơn: {{ settings.shop_opening_hours }}</span>
+        </div>
+
         <div class="quantity-row">
           <span>Số lượng</span>
           <div class="stepper">
@@ -53,10 +58,12 @@ function add() {
 .close { position: absolute; right: 16px; top: 16px; z-index: 1; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; color: var(--coffee); background: rgba(255,250,243,.9); cursor: pointer; }
 h2 { margin: 13px 0 6px; font-size: clamp(2rem, 5vw, 3rem); color: var(--coffee); }
 .description { color: #75675e; }
-.price { display: block; margin: 14px 0 26px; font-size: 1.35rem; color: #a45f2e; }
+.price { display: block; margin: 14px 0 10px; font-size: 1.35rem; color: #a45f2e; }
+.hours-note { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; padding: 6px 12px; border-radius: 99px; background: rgba(133, 75, 44, 0.08); color: #794426; font-size: 0.8rem; font-weight: 600; }
 .quantity-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; margin-bottom: 18px; border-block: 1px solid rgba(59,36,23,.1); font-weight: 600; }
 .stepper { display: flex; align-items: center; gap: 16px; }
 .stepper button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(59,36,23,.16); border-radius: 50%; background: white; color: var(--coffee); cursor: pointer; }
 .add-button { width: 100%; margin-top: 22px; }
+@media (max-width: 768px) { .product-modal { grid-template-columns: 1fr; } .product-modal > img { min-height: 240px; height: 240px; } .modal-body { padding: 30px 24px; } }
 @media (max-width: 680px) { .product-modal { max-height: calc(100vh - 24px); overflow-y: auto; grid-template-columns: 1fr; } .product-modal > img { min-height: 0; height: 230px; } .modal-body { padding: 30px 22px 24px; } }
 </style>

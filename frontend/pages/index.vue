@@ -179,9 +179,10 @@ const money = (value: string | number) => new Intl.NumberFormat('vi-VN').format(
       </div>
     </footer>
 
-    <ProductModal :product="selected" @close="selected = null" />
+    <ProductModal :product="selected" :settings="settings" @close="selected = null" />
     <CartDrawer :settings="settings" />
     <PwaInstallBanner />
+    <ScrollToTop />
   </main>
 </template>
 
