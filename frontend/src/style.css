@@ -18,7 +18,9 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html, body {
+  scroll-behavior: smooth !important;
+}
 body { margin: 0; min-width: 320px; min-height: 100vh; overflow-x: hidden; background: var(--cream); }
 #app, main { max-width: 100%; }
 button, input, textarea, select { font: inherit; }
