@@ -20,7 +20,7 @@ services:
     container_name: caitiem-frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "3004:3000"
     env_file:
       - ./frontend/.env
     environment:
