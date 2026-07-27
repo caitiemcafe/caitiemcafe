@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
 COPY . .
+ENV NUXT_API_TARGET=http://backend:3003
 RUN npm run build
 
 FROM node:20-alpine AS runner
