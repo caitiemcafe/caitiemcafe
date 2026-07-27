@@ -126,6 +126,10 @@ async function share() {
           <Sparkles :size="17" /> Lời nhắn hôm nay
         </button>
 
+        <NuxtLink to="/#menu" class="btn btn-menu-cta">
+          <Coffee :size="17" /> Xem Menu & Đặt món
+        </NuxtLink>
+
         <button class="btn btn-outline" :disabled="!quote" @click="share">
           <Copy v-if="copied" :size="17" />
           <Share2 v-else :size="17" />
@@ -175,8 +179,10 @@ async function share() {
 .quote-card blockquote { max-width: 100%; overflow-wrap: anywhere; margin: 0 0 25px; font-size: clamp(1.75rem,4.6vw,3rem); line-height: 1.35; letter-spacing: -.025em; }
 .topic { padding: 7px 13px; border-radius: 99px; color: #794426; background: #f1dfc9; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
 .loading { min-height: 160px; display: grid; place-items: center; align-content: center; gap: 12px; color: #75665c; }
-.actions { display: flex; gap: 10px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .btn-disabled { opacity: 0.75; cursor: not-allowed; background: rgba(59,36,23,.12) !important; color: #5f3e28 !important; border: 1px solid rgba(59,36,23,.15) !important; }
+.btn-menu-cta { background: #3b2417 !important; color: #fcebd9 !important; border: 1px solid rgba(197,139,85,0.4) !important; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(59,36,23,0.25); text-decoration: none; }
+.btn-menu-cta:hover { background: #523321 !important; color: #ffffff !important; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59,36,23,0.35); }
 .footnote { max-width: 470px; margin: 28px 0 0; color: rgba(59,36,23,.65); font-size: .78rem; line-height: 1.6; }
 .rotating { animation: spin .7s linear infinite; }
 
