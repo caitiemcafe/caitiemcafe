@@ -1,0 +1,62 @@
+name: CI/CD Pipeline - Cái Tiệm KÀFE
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  # 🧪 JOB 1: Continuous Integration (CI)
+  # Chạy kiểm tra code (Typecheck, Lint, Build test) khi có PR hoặc Push vào main
+  ci:
+    name: 🧪 Continuous Integration (Lint & Build Test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🔍 Typecheck (Frontend & Backend)
+        run: npm run typecheck
+
+      - name: 🧹 Lint Code
+        run: npm run lint
+
+      - name: 🏗️ Test Build
+        run: npm run build
+        env:
+          NUXT_API_TARGET: http://backend:3003
+
+  # 🚀 JOB 2: Continuous Deployment (CD)
+  # Chỉ chạy sau khi CI thành công VÀ là sự kiện PUSH/MERGE vào nhánh main
+  cd:
+    name: 🚀 Continuous Deployment (Deploy to VPS)
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📡 Deploy via SSH to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /opt/caitiemcafe
+            git pull origin main
+            docker compose up -d --build
+            docker compose exec -T backend npm run db:migrate
