@@ -20,7 +20,7 @@ const handleHeaderInstall = async () => {
     <div class="container nav-wrap">
       <NuxtLink to="/" class="brand" aria-label="Cái Tiệm - Trang chủ"><img src="/images/brand/cafe-name.png" alt="Cái Tiệm" /></NuxtLink>
       <nav :class="['nav-links', { open }]" aria-label="Điều hướng chính">
-        <a href="#menu" @click="close">Menu</a><a href="#story" @click="close">Về quán</a><a href="#contact" @click="close">Liên hệ</a>
+        <a href="/#menu" @click="close">Menu</a><a href="/#story" @click="close">Về quán</a><a href="/#contact" @click="close">Liên hệ</a>
         <NuxtLink to="/vibe" class="vibe-link" @click="close"><Sparkles :size="16" /> Vibe</NuxtLink>
         <button v-if="isInstallable" class="pwa-header-btn" @click="handleHeaderInstall"><Download :size="16" /> Tải App</button>
       </nav>

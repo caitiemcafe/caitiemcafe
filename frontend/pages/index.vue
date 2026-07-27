@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ArrowDown, ArrowRight, Clock3, Coffee, Heart, MapPin, Phone, ShoppingBag, Sparkles } from '@lucide/vue'
 import type { ApiResponse, Category, Product, Settings } from '~/src/types'
 
@@ -13,6 +13,18 @@ useSeoMeta({
 
 const activeCategory = ref<number | 'all'>('all')
 const selected = ref<Product | null>(null)
+
+onMounted(() => {
+  if (typeof window !== 'undefined' && window.location.hash) {
+    const hash = window.location.hash
+    setTimeout(() => {
+      const el = document.querySelector(hash)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
+    }, 250)
+  }
+})
 
 // Nuxt SSR Data Fetching
 const { data: categoryData, error: categoryErr } = await useFetch<ApiResponse<Category[]>>('/api/categories')
