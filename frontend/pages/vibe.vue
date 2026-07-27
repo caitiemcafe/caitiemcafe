@@ -7,7 +7,9 @@ useSeoMeta({
   title: 'Vibe QR — Một lời nhắn từ Cái Tiệm KÀFE',
   description: 'Chậm một chút. Thở sâu một chút. Rút một câu nhắn đầy năng lượng cho ngày của bạn.',
   ogTitle: 'Một lời nhắn từ Cái Tiệm KÀFE',
-  ogDescription: 'Rút một thông điệp nhỏ để ngày của bạn dịu hơn một chút.'
+  ogDescription: 'Rút một thông điệp nhỏ để ngày của bạn dịu hơn một chút.',
+  ogImage: 'https://caitiemkafe.com/images/brand/hero-cafe.webp',
+  ogUrl: 'https://caitiemkafe.com/vibe'
 })
 
 const VIBE_STORAGE_KEY = 'caitiem_vibe_daily'

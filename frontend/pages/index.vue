@@ -8,7 +8,8 @@ useSeoMeta({
   description: 'Những món quen được pha thật chỉn chu, giao tận nơi để ngày của bạn bắt đầu nhẹ nhàng hơn.',
   ogTitle: 'Cái Tiệm KÀFE — Cà phê & Thức uống giao tận nơi',
   ogDescription: 'Những món quen được pha thật chỉn chu, giao tận nơi để ngày của bạn bắt đầu nhẹ nhàng hơn.',
-  ogImage: '/images/brand/hero-cafe.webp'
+  ogImage: 'https://caitiemkafe.com/images/brand/hero-cafe.webp',
+  ogUrl: 'https://caitiemkafe.com'
 })
 
 const activeCategory = ref<number | 'all'>('all')

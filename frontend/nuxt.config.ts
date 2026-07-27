@@ -43,6 +43,10 @@ export default defineNuxtConfig({
     }
   },
 
+  experimental: {
+    appManifest: false
+  },
+
   app: {
     head: {
       title: 'Cái Tiệm KÀFE — Một chút cà phê. Một ngày thật chill.',
@@ -51,9 +55,13 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: 'Cái Tiệm — cà phê, ca cao, sữa chua và những thông điệp nhỏ cho một ngày thật chill.' },
         { name: 'theme-color', content: '#3B2417' },
-        { property: 'og:title', content: 'Cái Tiệm KÀFE' },
-        { property: 'og:description', content: 'Một chút cà phê. Một ngày thật chill.' },
-        { property: 'og:image', content: '/images/brand/hero-cafe.webp' }
+        { property: 'og:title', content: 'Cái Tiệm KÀFE — Một chút cà phê. Một ngày thật chill.' },
+        { property: 'og:description', content: 'Cái Tiệm — cà phê, ca cao, sữa chua và những thông điệp nhỏ cho một ngày thật chill.' },
+        { property: 'og:image', content: 'https://caitiemkafe.com/images/brand/hero-cafe.webp' },
+        { property: 'og:url', content: 'https://caitiemkafe.com' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' }
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
