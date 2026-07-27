@@ -12,6 +12,9 @@ services:
     environment:
       - PORT=3003
       - NODE_ENV=production
+    networks:
+      - default
+      - taothiep_net
 
   frontend:
     build:
@@ -30,3 +33,9 @@ services:
       - NUXT_PUBLIC_API_BASE=/api
     depends_on:
       - backend
+
+networks:
+  default:
+  taothiep_net:
+    external: true
+    name: api_taothiep_internal
