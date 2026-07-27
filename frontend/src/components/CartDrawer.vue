@@ -113,7 +113,7 @@ async function submit() {
         <p class="payment-note">Thanh toán khi nhận hàng (COD) · Quán sẽ liên hệ xác nhận thông tin giao hàng.</p><p v-if="error" class="error">{{ error }}</p>
         <div class="checkout-actions"><button type="button" class="btn btn-outline" @click="step = 'cart'">Quay lại</button><button class="btn btn-primary" :disabled="loading"><span v-if="loading" class="spinner"></span>{{ loading ? 'Đang gửi đơn...' : `Đặt hàng · ${money(total)}` }}</button></div>
       </form>
-      <div v-else class="success"><div class="success-icon"><CheckCircle2 :size="48" /></div><span class="eyebrow">Đặt hàng thành công</span><h3 class="serif">Cảm ơn bạn đã ghé Cái Tiệm!</h3><p>Quán sẽ sớm liên hệ và giao món cho bạn. Mã đơn của bạn là <b>{{ orderCode }}</b>.</p><button class="btn btn-primary" @click="close">Về trang chủ</button></div>
+      <div v-else class="success"><div class="success-icon"><CheckCircle2 :size="48" /></div><span class="eyebrow">Đặt hàng thành công</span><h3 class="serif">Cảm ơn bạn đã ghé Cái Tiệm KàFe!</h3><p>Quán sẽ sớm liên hệ và giao món cho bạn. Mã đơn của bạn là <b>{{ orderCode }}</b>.</p><button class="btn btn-primary" @click="close">Về trang chủ</button></div>
     </aside>
   </div>
 </template>

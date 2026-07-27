@@ -31,7 +31,7 @@ try {
   await page.getByLabel('Số điện thoại *').fill('0912345678')
   await page.getByLabel('Địa chỉ nhận hàng *').fill('123 Đường kiểm thử')
   await page.getByRole('button', { name: /Đặt hàng/ }).click()
-  await page.getByText('Cảm ơn bạn đã ghé Cái Tiệm!').waitFor()
+  await page.getByText('Cảm ơn bạn đã ghé Cái Tiệm KàFe!').waitFor()
 
   await page.goto(`${baseURL}/vibe`, { waitUntil: 'networkidle' })
   assert.ok((await page.locator('blockquote').textContent())?.trim(), 'Trang Vibe phải có nội dung')
