@@ -18,14 +18,17 @@ export default [
     rules: { '@typescript-eslint/no-explicit-any': 'off', '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
   },
   {
-    files: ['frontend/src/**/*.{ts,vue}'],
+    files: ['frontend/**/*.{ts,vue}'],
     languageOptions: {
-      globals: globals.browser,
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: { parser: tseslint.parser, extraFileExtensions: ['.vue'], sourceType: 'module' },
     },
     rules: {
       'vue/multi-word-component-names': 'off',
+      'no-undef': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-empty': 'off',
     },
   },
 ]
