@@ -115,6 +115,22 @@ function close() {
   if (step.value === 'success') step.value = 'cart'
 }
 
+function navigateToMenu() {
+  close()
+  if (import.meta.client) {
+    if (window.location.pathname === '/') {
+      const el = document.getElementById('menu')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        window.location.hash = '#menu'
+      }
+    } else {
+      navigateTo('/#menu')
+    }
+  }
+}
+
 async function submit() {
   loading.value = true
   error.value = ''
@@ -158,7 +174,7 @@ async function submit() {
           <ShoppingBag :size="42" />
           <h3>Giỏ hàng đang trống</h3>
           <p>Chọn một món thật vừa ý rồi quay lại đây nhé.</p>
-          <button class="btn btn-primary" @click="close">Xem menu</button>
+          <button class="btn btn-primary" @click="navigateToMenu">Xem menu</button>
         </div>
         <div v-else class="cart-content">
           <div class="cart-list">
@@ -235,7 +251,7 @@ async function submit() {
         <span class="eyebrow">Đặt hàng thành công</span>
         <h3 class="serif">Cảm ơn bạn đã ghé Cái Tiệm KàFe!</h3>
         <p>Quán sẽ sớm liên hệ và giao món cho bạn. Mã đơn của bạn là <b>{{ orderCode }}</b>.</p>
-        <button class="btn btn-primary" @click="close">Về trang chủ</button>
+        <button class="btn btn-primary" @click="navigateToMenu">Về trang chủ & Đặt thêm</button>
       </div>
     </aside>
   </div>

@@ -72,6 +72,7 @@ function saveProfile(name: string, phone: string, email: string, address: string
 onMounted(() => { loadProfiles() })
 function goToCheckout() { loadProfiles(); step.value = 'checkout' }
 function close() { cart.isOpen = false; if (step.value === 'success') step.value = 'cart' }
+function navigateToMenu() { close(); if (typeof window !== 'undefined') { if (window.location.pathname === '/') { const el = document.getElementById('menu'); if (el) el.scrollIntoView({ behavior: 'smooth' }); else window.location.hash = '#menu'; } else { window.location.href = '/#menu'; } } }
 async function submit() {
   loading.value = true; error.value = ''
   try {
@@ -90,7 +91,7 @@ async function submit() {
     <aside class="drawer" aria-label="Giỏ hàng">
       <div class="drawer-head"><div><span class="eyebrow">Đơn của bạn</span><h2 class="serif">{{ step === 'checkout' ? 'Thông tin giao hàng' : step === 'success' ? 'Quán đã nhận đơn' : 'Giỏ hàng' }}</h2></div><button aria-label="Đóng" @click="close"><X /></button></div>
       <template v-if="step === 'cart'">
-        <div v-if="!cart.items.length" class="empty"><ShoppingBag :size="42" /><h3>Giỏ hàng đang trống</h3><p>Chọn một món thật vừa ý rồi quay lại đây nhé.</p><button class="btn btn-primary" @click="close">Xem menu</button></div>
+        <div v-if="!cart.items.length" class="empty"><ShoppingBag :size="42" /><h3>Giỏ hàng đang trống</h3><p>Chọn một món thật vừa ý rồi quay lại đây nhé.</p><button class="btn btn-primary" @click="navigateToMenu">Xem menu</button></div>
         <div v-else class="cart-content">
           <div class="cart-list"><article v-for="item in cart.items" :key="item.key" class="cart-item"><img :src="item.product.imageUrl || '/images/menu/coffee.webp'" :alt="item.product.name" /><div><h3>{{ item.product.name }}</h3><p v-if="item.notes">{{ item.notes }}</p><strong>{{ money(Number(item.product.price) * item.quantity) }}</strong><div class="stepper"><button @click="cart.update(item.key, item.quantity - 1)"><Minus :size="15" /></button><span>{{ item.quantity }}</span><button @click="cart.update(item.key, item.quantity + 1)"><Plus :size="15" /></button></div></div><button class="trash" aria-label="Xóa món" @click="cart.remove(item.key)"><Trash2 :size="18" /></button></article></div>
           <div class="summary"><p><span>Tạm tính</span><b>{{ money(cart.subtotal) }}</b></p><p><span>Phí giao hàng</span><b>{{ shippingFee ? money(shippingFee) : 'Miễn phí' }}</b></p><p class="total"><span>Tổng cộng</span><b>{{ money(total) }}</b></p><button class="btn btn-primary" @click="goToCheckout">Tiếp tục đặt hàng</button></div>
