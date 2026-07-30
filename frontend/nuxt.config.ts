@@ -92,7 +92,8 @@ export default defineNuxtConfig({
       installPrompt: true
     },
     workbox: {
-      navigateFallback: null
+      navigateFallback: null,
+      globIgnores: ['**/google*.html', '**/sitemap.xml', '**/robots.txt']
     },
     devOptions: {
       enabled: true,
