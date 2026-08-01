@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Download, X } from '@lucide/vue'
+import { useRoute } from 'vue-router'
 import { usePWA } from '~/src/composables/usePWA'
+import { useAuthStore } from '~/src/stores/auth'
 
 const { isInstallable, install, dismiss } = usePWA()
 const showBanner = ref(false)
+const route = useRoute()
+const auth = useAuthStore()
+
+const isLoginPage = computed(() => route.path === '/admin/login')
+const isAdminRoute = computed(() => route.path.startsWith('/admin') && !isLoginPage.value && auth.isAuthenticated)
+
+const appTitle = computed(() => isAdminRoute.value ? 'Cài đặt Cái Tiệm Manager' : 'Cài đặt Cái Tiệm KÀFE')
+const appDesc = computed(() => isAdminRoute.value
+  ? 'Trải nghiệm quản lý mượt mà, xem đơn hàng và cập nhật menu tức thì.'
+  : 'Trải nghiệm mượt mà, đặt món nhanh hơn và dùng ngoại tuyến.'
+)
 
 onMounted(() => {
   if (import.meta.client) {
     const isDismissed = sessionStorage.getItem('pwa-dismissed')
-    if (!isDismissed) {
+    if (!isDismissed && !isLoginPage.value) {
       setTimeout(() => {
         showBanner.value = true
       }, 3000)
@@ -35,13 +48,13 @@ const handleDismiss = () => {
 
 <template>
   <Transition name="slide-up">
-    <div v-if="isInstallable && showBanner" class="pwa-banner-wrap">
+    <div v-if="isInstallable && showBanner && !isLoginPage" class="pwa-banner-wrap">
       <div class="pwa-banner">
         <div class="pwa-info">
           <img src="/favicon.svg" alt="Cái Tiệm KÀFE Logo" class="pwa-logo" />
           <div>
-            <h3>Cài đặt Cái Tiệm KÀFE</h3>
-            <p>Trải nghiệm mượt mà, đặt món nhanh hơn và dùng ngoại tuyến.</p>
+            <h3>{{ appTitle }}</h3>
+            <p>{{ appDesc }}</p>
           </div>
         </div>
         <div class="pwa-actions">

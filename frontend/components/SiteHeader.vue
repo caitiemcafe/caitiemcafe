@@ -13,12 +13,37 @@ const handleHeaderInstall = async () => {
   await install()
   close()
 }
+
+// Thao tác ẩn: Nhấp 5 lần liên tiếp vào logo để vào Admin
+const logoClicks = ref(0)
+let logoClickTimer: any = null
+const toastMessage = ref('')
+
+const handleLogoClick = (e: MouseEvent) => {
+  logoClicks.value++
+  if (logoClickTimer) clearTimeout(logoClickTimer)
+
+  if (logoClicks.value >= 5) {
+    e.preventDefault()
+    logoClicks.value = 0
+    toastMessage.value = '☕ Đang chuyển sang trang Quản trị...'
+    setTimeout(() => {
+      toastMessage.value = ''
+      navigateTo('/admin')
+    }, 600)
+    return
+  }
+
+  logoClickTimer = setTimeout(() => {
+    logoClicks.value = 0
+  }, 3000)
+}
 </script>
 
 <template>
   <header class="site-header">
     <div class="container nav-wrap">
-      <NuxtLink to="/" class="brand" aria-label="Cái Tiệm - Trang chủ"><img src="/images/brand/cafe-name.png" alt="Cái Tiệm" /></NuxtLink>
+      <NuxtLink to="/" class="brand" aria-label="Cái Tiệm - Trang chủ" @click="handleLogoClick"><img src="/images/brand/cafe-name.png" alt="Cái Tiệm" /></NuxtLink>
       <nav :class="['nav-links', { open }]" aria-label="Điều hướng chính">
         <a href="/#menu" @click="close">Menu</a><a href="/#story" @click="close">Về quán</a><a href="/#contact" @click="close">Liên hệ</a>
         <NuxtLink to="/vibe" class="vibe-link" @click="close"><Sparkles :size="16" /> Vibe</NuxtLink>
@@ -29,13 +54,20 @@ const handleHeaderInstall = async () => {
         <button class="menu-button" :aria-label="open ? 'Đóng menu' : 'Mở menu'" @click="open = !open"><X v-if="open" /><Menu v-else /></button>
       </div>
     </div>
+
+    <!-- Toast chuyển hướng Admin bí mật -->
+    <Transition name="toast-fade">
+      <div v-if="toastMessage" class="secret-toast">
+        {{ toastMessage }}
+      </div>
+    </Transition>
   </header>
 </template>
 
 <style scoped>
 .site-header { position: absolute; z-index: 20; width: 100%; padding: 18px 0; color: white; }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; }
-.brand { display: flex; align-items: center; justify-content: center; height: 72px; overflow: hidden; border-radius: 12px; background: rgba(255,250,243,.96); padding: 4px 8px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.brand { display: flex; align-items: center; justify-content: center; height: 72px; overflow: hidden; border-radius: 12px; background: rgba(255,250,243,.96); padding: 4px 8px; box-shadow: 0 4px 12px rgba(0,0,0,.15); cursor: pointer; user-select: none; }
 .brand img { height: 100%; width: auto; object-fit: contain; }
 .nav-links { display: flex; gap: 34px; align-items: center; font-size: .9rem; font-weight: 600; }
 .nav-links a { opacity: .88; transition: .2s; }
@@ -45,6 +77,26 @@ const handleHeaderInstall = async () => {
 .cart-button,.menu-button { position: relative; width: 44px; height: 44px; display: grid; place-items: center; color: white; border: 1px solid rgba(255,255,255,.22); border-radius: 50%; background: rgba(25,15,10,.25); backdrop-filter: blur(12px); cursor: pointer; }
 .cart-button span { position: absolute; right: -3px; top: -4px; min-width: 19px; height: 19px; padding: 0 4px; display: grid; place-items: center; border-radius: 99px; background: #d99353; font-size: 10px; font-weight: 800; }
 .menu-button { display: none; }
+
+.secret-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 12px 24px;
+  border-radius: 50px;
+  background: rgba(36, 21, 15, 0.92);
+  color: #fcebd9;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(217, 147, 83, 0.4);
+}
+.toast-fade-enter-active, .toast-fade-leave-active { transition: all 0.3s ease; }
+.toast-fade-enter-from, .toast-fade-leave-to { opacity: 0; transform: translate(-50%, -20px); }
+
 @media (max-width: 740px) {
   .menu-button { display: grid; }
   .nav-links { position: absolute; left: 14px; right: 14px; top: 78px; padding: 24px; display: none; flex-direction: column; gap: 22px; color: var(--coffee); background: rgba(255,250,243,.98); border-radius: 20px; box-shadow: var(--shadow); }
