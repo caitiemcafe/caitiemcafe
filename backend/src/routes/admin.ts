@@ -2,8 +2,9 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
 import multer from 'multer';
-import { Op } from 'sequelize';
-import { Category, Order, OrderItem, Product, Quote, Setting, User } from '../models/index.js';
+import { Op, QueryTypes } from 'sequelize';
+import { Category, ForwardClick, Order, OrderItem, Product, Quote, Setting, User } from '../models/index.js';
+import { sequelize } from '../config/database.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { ApiError } from '../utils/api-error.js';
 import { signAdminToken } from '../utils/auth.js';
@@ -11,6 +12,7 @@ import { requireAdmin } from '../middleware/auth.js';
 import { categorySchema, generateQuoteSchema, loginSchema, productSchema, quoteSchema, settingsSchema } from '../validation/schemas.js';
 import { fetchModels, generateQuotes, testAIConnection } from '../services/ai.js';
 import { uploadImage } from '../services/cloudinary.js';
+import { defaultForwardSettings } from '../services/settings.js';
 
 export const adminRouter = Router();
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 8, standardHeaders: 'draft-8', legacyHeaders: false, message: { success: false, message: 'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau.' } });
@@ -91,7 +93,8 @@ adminRouter.post('/quotes/generate-ai', asyncHandler(async (req, res) => {
 }));
 
 adminRouter.get('/settings', asyncHandler(async (_req, res) => {
-  const rows = await Setting.findAll(); res.json({ success: true, data: Object.fromEntries(rows.map((row) => [row.key, row.value])) });
+  const rows = await Setting.findAll();
+  res.json({ success: true, data: { ...defaultForwardSettings, ...Object.fromEntries(rows.map((row) => [row.key, row.value])) } });
 }));
 adminRouter.put('/settings', asyncHandler(async (req, res) => {
   const input = settingsSchema.parse(req.body);
@@ -121,5 +124,98 @@ adminRouter.post('/ai/test', asyncHandler(async (req, res) => {
 
 adminRouter.post('/upload', upload.single('image'), asyncHandler(async (req, res) => {
   if (!req.file) throw new ApiError(422, 'Vui lòng chọn ảnh JPG, PNG, WebP hoặc AVIF dưới 5 MB.');
-  res.status(201).json({ success: true, data: { url: await uploadImage(req.file.buffer) } });
+  res.status(201).json({ success: true, data: { url: await uploadImage(req.file.buffer, req.file.originalname) } });
 }));
+
+adminRouter.get('/forward/stats', asyncHandler(async (req, res) => {
+  let startDate: Date;
+  let endDate: Date;
+
+  const monthParam = typeof req.query.month === 'string' && req.query.month.match(/^\d{4}-\d{2}$/) ? req.query.month : null;
+  const fromParam = typeof req.query.from === 'string' && req.query.from.match(/^\d{4}-\d{2}-\d{2}$/) ? req.query.from : null;
+  const toParam = typeof req.query.to === 'string' && req.query.to.match(/^\d{4}-\d{2}-\d{2}$/) ? req.query.to : null;
+
+  if (fromParam && toParam) {
+    startDate = new Date(`${fromParam}T00:00:00.000Z`);
+    endDate = new Date(`${toParam}T23:59:59.999Z`);
+  } else if (monthParam) {
+    const [y, m] = monthParam.split('-').map(Number);
+    startDate = new Date(Date.UTC(y, m - 1, 1, 0, 0, 0, 0));
+    endDate = new Date(Date.UTC(y, m, 0, 23, 59, 59, 999));
+  } else {
+    const now = new Date();
+    startDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0));
+    endDate = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999));
+  }
+
+  const wherePeriod = {
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+  };
+
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20));
+  const offset = (page - 1) * limit;
+
+  const [totalClicks, uniqueIpsResult, recentClicksResult] = await Promise.all([
+    ForwardClick.count({ where: wherePeriod }),
+    ForwardClick.count({ distinct: true, col: 'ipAddress', where: wherePeriod }),
+    ForwardClick.findAndCountAll({
+      where: wherePeriod,
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    }),
+  ]);
+
+  const dailyRaw = await sequelize.query<{ date: string; clicks: number; uniqueIps: number }>(
+    `SELECT DATE_FORMAT(created_at, '%Y-%m-%d') as date, COUNT(*) as clicks, COUNT(DISTINCT ip_address) as uniqueIps
+     FROM forward_clicks
+     WHERE created_at BETWEEN :startDate AND :endDate
+     GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')
+     ORDER BY date ASC`,
+    {
+      replacements: { startDate, endDate },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  const topIpsRaw = await sequelize.query<{ ipAddress: string; clicks: number; lastClick: string }>(
+    `SELECT ip_address as ipAddress, COUNT(*) as clicks, MAX(created_at) as lastClick
+     FROM forward_clicks
+     WHERE created_at BETWEEN :startDate AND :endDate
+     GROUP BY ip_address
+     ORDER BY clicks DESC
+     LIMIT 10`,
+    {
+      replacements: { startDate, endDate },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  res.json({
+    success: true,
+    data: {
+      filter: {
+        from: startDate.toISOString().split('T')[0],
+        to: endDate.toISOString().split('T')[0],
+        month: monthParam || `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`,
+      },
+      summary: {
+        totalClicks,
+        uniqueIps: Number(uniqueIpsResult || 0),
+      },
+      dailyStats: dailyRaw,
+      topIps: topIpsRaw,
+      recentClicks: recentClicksResult.rows,
+      meta: {
+        page,
+        limit,
+        total: recentClicksResult.count,
+        pages: Math.ceil(recentClicksResult.count / limit),
+      },
+    },
+  });
+}));
+
