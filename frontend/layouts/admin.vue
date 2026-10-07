@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { BarChart3, Coffee, Download, FileText, LogOut, Menu, MessageCircleHeart, Settings, X } from '@lucide/vue'
+import { BarChart3, Coffee, Download, ExternalLink, FileText, LogOut, Menu, MessageCircleHeart, Settings, X } from '@lucide/vue'
 import { useAuthStore } from '~/src/stores/auth'
 import { usePWA } from '~/src/composables/usePWA'
 
@@ -20,6 +20,7 @@ const links = [
   { to: '/admin/products', label: 'Menu', icon: Coffee },
   { to: '/admin/orders', label: 'Đơn đã đặt', icon: FileText },
   { to: '/admin/quotes', label: 'Thông điệp', icon: MessageCircleHeart },
+  { to: '/admin/forward', label: 'Trang Forward', icon: ExternalLink },
   { to: '/admin/settings', label: 'Cài đặt', icon: Settings }
 ]
 

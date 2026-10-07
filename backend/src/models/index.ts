@@ -77,3 +77,23 @@ Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'items' });
 OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
 Product.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems' });
 OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+
+export class ForwardClick extends Model<InferAttributes<ForwardClick>, InferCreationAttributes<ForwardClick>> {
+  declare id: CreationOptional<number>;
+  declare ipAddress: string;
+  declare userAgent: string | null;
+  declare referer: string | null;
+  declare targetUrl: string | null;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
+}
+ForwardClick.init({
+  id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+  ipAddress: { type: DataTypes.STRING(64), allowNull: false },
+  userAgent: { type: DataTypes.TEXT, allowNull: true },
+  referer: { type: DataTypes.STRING(500), allowNull: true },
+  targetUrl: { type: DataTypes.STRING(500), allowNull: true },
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE,
+}, { sequelize, tableName: 'forward_clicks', modelName: 'ForwardClick' });
+

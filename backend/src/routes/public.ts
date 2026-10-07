@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { Category, Product, Quote } from '../models/index.js';
+import { Category, ForwardClick, Product, Quote } from '../models/index.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { orderSchema } from '../validation/schemas.js';
 import { createOrder } from '../services/orders.js';
@@ -55,3 +55,25 @@ publicRouter.get('/vibe/random', vibeLimiter, asyncHandler(async (_req, res) => 
   });
   res.json({ success: true, data: { id: quote.id, content: quote.content, topic: quote.topic } });
 }));
+
+publicRouter.post('/forward/click', asyncHandler(async (req, res) => {
+  const forwarded = req.headers['x-forwarded-for'];
+  const rawIp = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : req.socket.remoteAddress) || '127.0.0.1';
+  let ipAddress = rawIp.replace(/^::ffff:/, '');
+  if (ipAddress === '::1') {
+    ipAddress = '127.0.0.1';
+  }
+  const userAgent = req.headers['user-agent'] ? String(req.headers['user-agent']).slice(0, 1000) : null;
+  const referer = req.headers['referer'] ? String(req.headers['referer']).slice(0, 500) : null;
+  const targetUrl = req.body?.targetUrl ? String(req.body.targetUrl).slice(0, 500) : null;
+
+  await ForwardClick.create({
+    ipAddress,
+    userAgent,
+    referer,
+    targetUrl,
+  });
+
+  res.status(201).json({ success: true });
+}));
+
