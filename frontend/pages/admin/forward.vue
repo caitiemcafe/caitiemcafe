@@ -946,10 +946,27 @@ function copyLink() {
   display: grid;
   gap: 24px;
 }
+.admin-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 6px;
+}
+.admin-page-head h1 {
+  margin: 7px 0 4px;
+  color: var(--coffee);
+  font: 700 2.3rem 'Playfair Display', serif;
+}
+.admin-page-head p {
+  margin: 0;
+  color: #87786e;
+}
 .head-actions {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-shrink: 0;
 }
 .btn-outline {
   display: inline-flex;
@@ -1834,11 +1851,352 @@ function copyLink() {
   .forward-layout-grid {
     grid-template-columns: 1fr;
   }
+  .preview-sticky {
+    position: static;
+  }
+  .device-mockup {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .forward-admin-page {
+    gap: 16px;
+  }
+
+  .admin-page-head {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .admin-page-head h1 {
+    font-size: 1.55rem !important;
+    line-height: 1.25 !important;
+    margin: 4px 0 !important;
+    word-break: normal !important;
+  }
+
+  .admin-page-head p {
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .head-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .head-actions .btn-outline {
+    justify-content: center;
+    padding: 9px 10px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    border-radius: 10px;
+  }
+
+  /* Segmented pill tabs */
+  .forward-tabs-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: #eadbc9;
+    padding: 4px;
+    border-radius: 14px;
+    border-bottom: none;
+  }
+
+  .tab-btn {
+    justify-content: center;
+    padding: 10px 6px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    gap: 6px;
+  }
+
+  .tab-btn.active {
+    background: #fffdf9;
+    box-shadow: 0 2px 6px rgba(59, 36, 23, 0.1);
+  }
+
+  .tab-btn.active::after {
+    display: none;
+  }
+
+  .counter-pill {
+    padding: 1px 6px;
+    font-size: 0.68rem;
+  }
+
+  /* Filter card */
+  .filter-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .filter-controls-wrap {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filter-type-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    background: #e3d5c6;
+    padding: 3px;
+    border-radius: 10px;
+  }
+
+  .filter-type-btn {
+    text-align: center;
+    padding: 8px 6px;
+    font-size: 0.82rem;
+  }
+
+  .filter-inputs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .month-input-wrap {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 12px;
+    box-sizing: border-box;
+  }
+
+  .month-input-wrap .field-sm {
+    flex: 1;
+    font-size: 0.88rem;
+  }
+
+  .date-input-wrap {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+    padding: 6px 10px;
+    box-sizing: border-box;
+  }
+
+  .date-input-wrap .field-sm {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .quick-month-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .btn-chip {
+    text-align: center;
+    padding: 8px;
+    font-size: 0.82rem;
+  }
+
+  .btn-refresh {
+    width: 100%;
+    justify-content: center;
+    padding: 9px;
+    font-size: 0.84rem;
+  }
+
+  /* Summary KPI cards */
   .stats-summary-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
+
+  .kpi-card {
+    padding: 14px 16px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .kpi-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .kpi-number {
+    font-size: 1.55rem;
+  }
+
+  .kpi-label {
+    font-size: 0.8rem;
+  }
+
+  /* Detail Grid */
   .stats-detail-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .panel {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .card-head-title h2 {
+    font-size: 1.15rem;
+  }
+
+  /* Daily bars */
+  .daily-row {
+    grid-template-columns: 74px 1fr 76px;
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+
+  .daily-bar-track {
+    height: 14px;
+  }
+
+  .daily-counts {
+    font-size: 0.75rem;
+  }
+
+  /* Top IPs */
+  .top-ip-item {
+    padding: 9px 12px;
+    border-radius: 10px;
+    gap: 8px;
+  }
+
+  .ip-badge {
+    font-size: 0.8rem;
+  }
+
+  .ip-count-badge {
+    font-size: 0.8rem;
+  }
+
+  /* Table */
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+  }
+
+  .clicks-table th,
+  .clicks-table td {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .ip-cell {
+    font-size: 0.75rem;
+    padding: 2px 5px;
+  }
+
+  .ua-tag {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .text-truncate-cell {
+    max-width: 120px;
+  }
+
+  .pagination-bar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .btn-page {
+    justify-content: center;
+  }
+
+  /* Settings form */
+  .switch-row {
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  .switch-row b {
+    font-size: 0.88rem;
+  }
+
+  .switch-row small {
+    font-size: 0.76rem;
+  }
+
+  .media-type-tabs {
+    padding: 3px;
+    gap: 6px;
+  }
+
+  .type-tab-btn {
+    padding: 9px 10px;
+    font-size: 0.84rem;
+  }
+
+  .upload-zone-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .upload-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .save-btn-full {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  /* Modal */
+  .qr-modal-box {
+    padding: 20px 16px;
+    border-radius: 20px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .qr-canvas-center canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .qr-link-copy {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .btn-copy {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .qr-modal-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .head-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-row {
+    grid-template-columns: 65px 1fr 65px;
+    font-size: 0.74rem;
   }
 }
 </style>

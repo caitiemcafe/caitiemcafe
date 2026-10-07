@@ -608,14 +608,55 @@ onUnmounted(() => {
   .forward-viewport {
     padding: 16px 12px;
   }
+  .brand-bar {
+    padding: 0 4px;
+    margin-bottom: 4px;
+  }
+  .brand-logo {
+    height: 38px;
+  }
+  .safe-badge {
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+  .image-wrapper {
+    max-height: 280px;
+  }
+  .forward-image {
+    max-height: 280px;
+  }
   .card-content {
-    padding: 22px 18px 26px;
+    padding: 20px 16px 24px;
+    gap: 16px;
   }
   .card-title {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
+  }
+  .card-desc {
+    font-size: 0.88rem;
   }
   .badge-capsule {
     max-width: 100%;
+    min-height: 42px;
+  }
+  .badge-label-content {
+    padding: 6px 14px;
+    font-size: 0.84rem;
+    gap: 6px;
+  }
+  .badge-text strong {
+    font-size: 0.95rem;
+  }
+  .btn-primary-cta {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    border-radius: 14px;
+  }
+  .btn-secondary-link {
+    padding: 9px 14px;
+    font-size: 0.82rem;
+    border-radius: 12px;
   }
 }
 </style>
